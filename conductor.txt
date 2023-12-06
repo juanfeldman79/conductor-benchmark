@@ -1,0 +1,72 @@
+DynomiteDB vs Redis Cluster
+-------------------------------
+https://redis.com/blog/why-migrate-dynomite-database-to-redis-enterprise-active-active-database/
+
+
+DynomiteDB
+-------------------------------
+https://www.dynomitedb.com/ --> THIS PROJECT IS NO LONGER MAINTAINED
+
+https://github.com/Netflix/dynomite
+
+
+Conductor
+-------------------------------
+https://conductor.netflix.com/documentation/advanced/redis.html
+
+https://www.baeldung.com/redis-sentinel-vs-clustering
+
+https://github.com/Netflix/conductor/discussions/2321
+
+https://github.com/Netflix/dynomite/issues/532
+
+
+
+AI RecSys SDK
+-------------------------------
+make setup-s3 setup-es
+
+make register-wf
+
+make -j run-fork-by-page run-schematizor run-annotators run-join run-indexer
+
+Not needed:
+    make start-wf
+    make start-wf-no-ingester
+
+localhost:8080/api/workflow/search?query=status="RUNNING" AND workflowType="example_python_jfeldman_4RYG"
+
+
+ElasticSearch
+-------------------------------
+# elasticsearch The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+elasticsearch:
+	image: elasticsearch:6.8.15
+	container_name: elasticsearch
+	platform: linux/arm64/v8
+	image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+	container_name: conductor-elasticsearch
+
+curl -XPOST 'http://localhost:19200/example_attachment_1.0/_delete_by_query' -d' { "query": { "match_all":{} } } ' -H 'Content-Type: application/json'
+
+
+Docker
+-------------------------------
+Postgresql:
+    docker-compose -f $CONDUCTOR_HOME/docker-compose-postgres.yaml up
+    docker-compose -f $CONDUCTOR_HOME/docker-compose-postgres.yaml down -v
+
+
+Redis Cluster:
+    docker-compose -f $CONDUCTOR_HOME/docker-compose-redis-cluster.yaml up redis-node-5
+    docker-compose -f $CONDUCTOR_HOME/docker-compose-redis-cluster.yaml up conductor-server
+
+Redis Standalone:
+    docker-compose -f $CONDUCTOR_HOME/docker-compose.yaml up
+
+
+Redis CLI
+-------------------------------
+REDISCLI_AUTH=bitnami redis-cli -c -p 7000
+
+docker exec -it redis-node-0 redis-cli -a bitnami -c set "name" "juan"
